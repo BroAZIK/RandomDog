@@ -1,7 +1,7 @@
 from flask import Flask, request
 from telegram import Bot
 
-TOKEN = "5809174742:AAFK-9p2LXXoa-OIHwYpsKO_VPKBJJ0beuc"
+TOKEN = "6397463095:AAGtjW-uI_QbugtFN6NHt6TG2eQ_Zwlvljc"
 
 app = Flask(__name__)
 bot = Bot(token=TOKEN)
@@ -19,5 +19,4 @@ def hello_world():
 
         bot.send_message(chat_id=chat_id, text=text)
 
-        return 'Got a POST request!'
-
+        return 'Got a POST request!' 

@@ -1,55 +1,25 @@
-import time
-from handlers import (
-    get_last_update,
-    start,
-    dog
-)
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
+from handlers import start, help, echo
+
+import os
+
+TOKEN = os.environ.get('TOKEN')
 
 def main():
-    # get last update
-    last_update = get_last_update()
-    # get last update_id
-    last_update_id = last_update['update_id']
+    updater = Updater(TOKEN)
 
-    # infinite loop
-    while True:
-        # get new update
-        new_update = get_last_update()
+    dp = updater.dispatcher
 
-        # get new update_id
-        new_update_id = new_update['update_id']
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("help", help))
 
-        # check if new update_id is not equal to last update_id
-        if new_update_id != last_update_id:
-            # get new message
-            new_message = new_update['message']
-            
-            # get user chat_id
-            chat_id = new_message['chat']['id']
-            
-            # check if new message has text
-            if 'text' in new_message.keys():
-                # get new message text
-                text = new_message['text']
+    dp.add_handler(MessageHandler(Filters.text, echo))
 
-                # check if new message text is equal to '/start'
-                if text == '/start':
+    updater.start_polling()
 
-                    # get new message first_name
-                    first_name = new_message['chat']['first_name']
+    updater.idle()
 
-                    # send start message
-                    start(chat_id, first_name)
 
-                elif text == '🐶':
-                    dog(chat_id)
-                
-
-            # set last update_id to new update_id
-            last_update_id = new_update_id
-
-        # sleep for 1 second
-        time.sleep(1)
-
-main()
+if __name__ == '__main__':
+    main()

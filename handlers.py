@@ -1,34 +1,15 @@
-import requests
-from settings import URL
+from telegram import Update
+from telegram.ext import CallbackContext
 
 
-def get_last_update():
-    url = URL + 'getUpdates'
-    r = requests.get(url)
-    return r.json()['result'][-1]
+def start(update: Update, context: CallbackContext):
+    update.message.reply_text(
+        "Hello! My name is EchoBot. I will echo everything you say to me."
+    )
 
+def help(update: Update, context: CallbackContext):
+    update.message.reply_text("Help!")
 
-def start(chat_id, first_name):
-    url = URL + 'sendMessage'
-    data = {
-        'chat_id': chat_id,
-        'text': "Assalomu alaykum {}. kuchukchani bosing!".format(first_name),
-        'parse_mode': 'HTML',
-        'reply_markup': {
-            'keyboard': [['🐶']],
-            'resize_keyboard': True
-        }
-    }
-    requests.post(url, json=data)
+def echo(update: Update, context: CallbackContext):
+    update.message.reply_text(update.message.text)
 
-
-def dog(chat_id):
-    r = requests.get('https://random.dog/woof.json')
-    img_url = r.json()['url']
-
-    url = URL + 'sendPhoto'
-    data = {
-        'chat_id': chat_id,
-        'photo': img_url
-    }
-    requests.post(url, json=data)

@@ -1,22 +1,34 @@
 from flask import Flask, request
-from telegram import Bot
 
-TOKEN = "6397463095:AAGtjW-uI_QbugtFN6NHt6TG2eQ_Zwlvljc"
+from telegram import Bot, Update
+from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters
+from handlers import start, help, echo
+
+TOKEN = "5922381162:AAHZlv7P-uypWE8IzpQd0F6pZq9vex_IhyI"
+
+TOKEN = os.environ.get('TOKEN')
+bot = Bot(token=TOKEN)
+
 
 app = Flask(__name__)
-bot = Bot(token=TOKEN)
 
 
 @app.route('/', methods=['GET', 'POST'])
 def hello_world():
     if request.method == 'GET':
-        return 'Hello, World!'
+        return 'webhook is working!'
 
     elif request.method == 'POST':
-        update = request.get_json()
-        chat_id = update['message']['chat']['id']
-        text = 'Assalomu alaykum!'
+        dp = Dispatcher(bot, None, workers=0)
 
-        bot.send_message(chat_id=chat_id, text=text)
+        update = Update.de_json(request.get_json(force=True), bot)
+        
+        dp.add_handler(CommandHandler("start", start))
+        dp.add_handler(CommandHandler("help", help))
 
-        return 'Got a POST request!' 
+        dp.add_handler(MessageHandler(Filters.text, echo))
+
+        dp.process_update(update)
+
+        return 'Got a POST request!'
+
